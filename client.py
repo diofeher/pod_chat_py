@@ -11,9 +11,8 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 from Queue import Queue, Empty
-from Tkinter import Tk, Button, Text, LEFT, TOP, Entry, END, DISABLED
+from Tkinter import Tk, Button, Text, LEFT, TOP, RIGHT, Entry, END, DISABLED, Scrollbar, Y
 import settings
-
 
 
 class GUIClient(object):
@@ -35,7 +34,9 @@ class GUIClient(object):
         self.socket.connect((host, port))
         
         # TODO: Mount widget
-        self.text = Text(width=self.TEXT_WIDTH)
+        scrollbar = Scrollbar()
+        scrollbar.pack(side=RIGHT, fill=Y)
+        self.text = Text(width=self.TEXT_WIDTH, yscrollcommand=scrollbar.set)
         self.text.pack(side=TOP)
         self.input = Entry(width=self.INPUT_WIDTH)
         self.input.pack(side=LEFT)
@@ -44,6 +45,7 @@ class GUIClient(object):
         
     def receive_message(self, msg):
         self.text.insert(END, msg + "\n")
+        self.text.see(END)
     
     def send_message(self):
         msg = self.input.get()
