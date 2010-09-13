@@ -10,36 +10,15 @@
 """
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
+from Queue import Queue, Empty
 from Tkinter import Tk, Button, Text, LEFT, TOP, Entry
-import Queue
 import settings
 
-class ThreadSafeText(Text):
-    def __init__(self, master, **options):
-        Text.__init__(self, master, **options)
-        self.queue = Queue.Queue()
-        self.update_me()
-    def write(self, line):
-        self.queue.put(line)
-    def clear(self):
-        self.queue.put(None)
-    def update_me(self):
-        try:
-            while 1:
-                line = self.queue.get_nowait()
-                if line is None:
-                    self.delete(1.0, END)
-                else:
-                    self.insert(END, str(line))
-                self.see(END)
-                self.update_idletasks()
-        except Queue.Empty:
-            pass
-        self.after(100, self.update_me)
 
-class Client(object):
+
+class GUIClient(object):
     """Client"""
-    def __init__(self, host, port):
+    def __init__(self, host, port, queue):
         """
         Wrapper used to control sockets and widgets
         
@@ -47,13 +26,15 @@ class Client(object):
         @param port: int
         """
         # Connecting socket
+        self.queue = queue
         self.socket = socket(AF_INET, SOCK_STREAM)
         self.socket.connect((host, port))
         thread = Thread(target=self.receiving)
+        thread.setDaemon(1)
         thread.start()
         
         # TODO: Mount widget
-        self.text = ThreadSafeText()
+        self.text = Text()
         self.text.pack(side=TOP)
         self.send = Button(text="Send a message", command=self.send_message)
         self.send.pack(side=LEFT)
@@ -67,11 +48,45 @@ class Client(object):
     def send_message(self):
         msg = self.input.get()
         self.socket.send(msg)
+
+    def incoming(self):
+         """
+         Handle all the messages currently in the queue (if any).
+         """
+         while self.queue.qsize():
+             try:
+                 msg = self.queue.get(0)
+                 # Check contents of message and do what it says
+                 # As a test, we simply print it
+                 print msg
+             except Empty:
+                 pass
         
     def disconnect(self):
         self.socket.close()
+
+class ThreadedClient(object):
+    def __init__(self, master):
+        self.master = master
+        self.queue = Queue()
+        self.gui = GUIClient(settings.HOST, settings.PORT, self.queue)
+        
+        self.thread = Thread(target=self.async_io)
+        self.thread.start()
+        
+        # check if message incoming
+        self.check_msgs()
+        
+    def check_msgs(self):
+        self.gui.incoming()
+        self.master.after(1000, self.check_msgs)
+        
+    def async_io(self):
+        while 1:
+            data = self.gui.socket.recv(1024)
+            self.queue.put(data)
         
 if __name__=="__main__":
-    client = Client(settings.HOST, settings.PORT)
     root = Tk()
+    ThreadedClient(root)
     root.mainloop()
