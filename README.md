@@ -1,3 +1,6 @@
+POD_CHAT_PY
+============
+
 What?
 -----
 TCP chat built in low-level python sockets/threads.
@@ -20,7 +23,7 @@ Who?
 Coded by [Diógenes Augusto Fernandes Hermínio][diofeher].
 
 LICENSE
--------
+=======
 See LICENSE.
 
 [diofeher]:http://www.diofeher.net/
