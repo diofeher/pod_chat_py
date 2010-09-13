@@ -11,6 +11,7 @@
 
 from threading import Thread
 from socket import socket, AF_INET, SOCK_STREAM
+import re
 import settings
 
 
@@ -36,7 +37,8 @@ class Server(object):
 
     def accept(self):
         con, address = self.socket.accept()
-        self.add_connection(con)
+        print con, address
+        self.connections.append(con)
         
         thread = Thread(target=self.connection, args=(con,))
         thread.start()
@@ -44,17 +46,18 @@ class Server(object):
     def connection(self, con):
         while 1:
             data = con.recv(1024)
+            # handle messages
             if data:
-                self.send_broadcast(data)
+                nick = re.search('^(/nick) (.+)', data)
+                if nick:
+                    new_nick = nick.group(2)
+                    self.send_broadcast("bixin mudou nick para %s" % new_nick)
+                else:
+                    data = "fulano disse: %s" % data
+                    self.send_broadcast(data)
             else:
                 break
         con.close()
-
-    def add_connection(self, con):
-        """
-        used to handle all connections
-        """
-        self.connections.append(con)
         
     def send_msg(self, con, msg):
         """
