@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    server
+    client
 
     description
 
