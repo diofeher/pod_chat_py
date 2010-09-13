@@ -14,6 +14,17 @@ from socket import socket, AF_INET, SOCK_STREAM
 import re
 import settings
 
+WELCOME_MSG = """
+######################################################
+#                     P.O.D. CHAT PY                 #
+######################################################
+# To speak, just write and click in 'Send a message' #
+# To change your nick: /nick new_nick                #
+# To quit: /quit                                     #
+######################################################
+
+"""
+
 
 class Connection(object):
     """
@@ -25,6 +36,7 @@ class Connection(object):
         self.ip = ip
         self.port = port
         self.nick = "Guest %s" % randint(0, 1000)
+        self.socket.send(WELCOME_MSG)
         
     def to_s(self):
         return "%s (%s-%s)" % (self.nick, self.ip, self.port)
@@ -62,17 +74,17 @@ class Server(object):
     def connection(self, sock, connection):
         try:
             while 1:
-                data = sock.recv(1024)
+                data = sock.recv(4056)
                 # handle messages
                 if data:
                     nick = connection.nick
-                    nick_regex = re.search('^(/nick) (.+)', data)
+                    nick_regex = re.search('^/nick (.+)', data)
                     quit = re.search('^quit.+', data)
                     if nick_regex:
-                        new_nick = nick_regex.group(2)
+                        new_nick = nick_regex.group(1)
                         connection.nick = new_nick
                         self.send_broadcast("%s is now known as %s" % (nick, new_nick))
-                    if quit:
+                    elif quit:
                         break
                     else:
                         data = "%s says: %s" % (connection.to_s(), data)

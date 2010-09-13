@@ -84,7 +84,7 @@ class ThreadedClient(object):
         
     def async_io(self):
         while 1:
-            data = self.gui.socket.recv(1024)
+            data = self.gui.socket.recv(4056)
             self.queue.put(data)
         
 if __name__=="__main__":
