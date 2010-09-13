@@ -15,6 +15,18 @@ import re
 import settings
 
 
+class Connection(object):
+    """
+    Wrapper used in connection
+    """
+    def __init__(self, s, addr):
+        self.socket = s
+        ip, port = addr
+        self.ip = ip
+        self.port = self.port
+        self.nick = "Guest %s" % randint(0, 1000)
+
+
 class Server(object):
     """TCP Socket Server"""
     def __init__(self, host, port):
