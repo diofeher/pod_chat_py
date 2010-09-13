@@ -60,22 +60,31 @@ class Server(object):
         thread.start()
         
     def connection(self, sock, connection):
-        while 1:
-            data = sock.recv(1024)
-            # handle messages
-            if data:
-                nick = connection.nick
-                nick_regex = re.search('^(/nick) (.+)', data)
-                if nick_regex:
-                    new_nick = nick_regex.group(2)
-                    connection.nick = new_nick
-                    self.send_broadcast("%s is now known as %s" % (nick, new_nick))
+        try:
+            while 1:
+                data = sock.recv(1024)
+                # handle messages
+                if data:
+                    nick = connection.nick
+                    nick_regex = re.search('^(/nick) (.+)', data)
+                    quit = re.search('^quit.+', data)
+                    if nick_regex:
+                        new_nick = nick_regex.group(2)
+                        connection.nick = new_nick
+                        self.send_broadcast("%s is now known as %s" % (nick, new_nick))
+                    if quit:
+                        break
+                    else:
+                        data = "%s says: %s" % (connection.to_s(), data)
+                        self.send_broadcast(data)
                 else:
-                    data = "%s says: %s" % (connection.to_s(), data)
-                    self.send_broadcast(data)
-            else:
-                break
-        sock.close()
+                    break
+        except Exception, e:
+            print e
+        finally:
+            self.send_broadcast("%s has left chat." % connection.nick)
+            self.sockets.pop(sock)
+            sock.close()
         
     def send_msg(self, con, msg):
         """
