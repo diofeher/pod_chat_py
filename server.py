@@ -125,7 +125,7 @@ class Server(object):
         """
         self.socket.close()
 
-server = Server(settings.HOST, settings.PORT)
+server = Server(HOST, settings.PORT)
 server.listen(5)  # maximum of 5 connections
 
 while 1:
