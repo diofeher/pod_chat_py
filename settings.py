@@ -7,4 +7,4 @@
 """
 
 HOST = 'localhost'
-PORT = 8156
+PORT = 8154

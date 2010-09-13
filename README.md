@@ -16,6 +16,16 @@ To launch client, use
     python client.py
 
 both in command line.
+If you want to specify ips, use
+
+    python server.py 222.222.222.222
+
+to server, and 
+
+    python client.py 222.222.222.222
+
+to client.
+
 
 Who?
 ----

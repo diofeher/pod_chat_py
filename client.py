@@ -12,8 +12,13 @@ from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 from Queue import Queue, Empty
 from Tkinter import Tk, Button, Text, LEFT, TOP, RIGHT, Entry, END, DISABLED, Scrollbar, Y
+import sys
 import settings
 
+try:
+    HOST = sys.argv[1]
+except:
+    HOST = settings.HOST
 
 class GUIClient(object):
     """Client"""
@@ -72,7 +77,7 @@ class ThreadedClient(object):
     def __init__(self, master):
         self.master = master
         self.queue = Queue()
-        self.gui = GUIClient(settings.HOST, settings.PORT, self.queue)
+        self.gui = GUIClient(HOST, settings.PORT, self.queue)
         
         self.thread = Thread(target=self.async_io)
         self.thread.start()

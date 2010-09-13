@@ -14,6 +14,11 @@ from socket import socket, AF_INET, SOCK_STREAM
 import re
 import settings
 
+try:
+    HOST = sys.argv[1]
+except:
+    HOST = settings.HOST
+
 WELCOME_MSG = """
 ######################################################
 #                     P.O.D. CHAT PY                 #
