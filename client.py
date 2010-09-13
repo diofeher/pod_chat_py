@@ -25,15 +25,19 @@ class GUIClient(object):
         @param host: unicode
         @param port: int
         """
+        # Constants
+        self.TEXT_WIDTH = 150
+        self.INPUT_WIDTH = self.TEXT_WIDTH - self.TEXT_WIDTH/3
+        
         # Connecting socket
         self.queue = queue
         self.socket = socket(AF_INET, SOCK_STREAM)
         self.socket.connect((host, port))
         
         # TODO: Mount widget
-        self.text = Text()
+        self.text = Text(width=self.TEXT_WIDTH)
         self.text.pack(side=TOP)
-        self.input = Entry()
+        self.input = Entry(width=self.INPUT_WIDTH)
         self.input.pack(side=LEFT)
         self.send = Button(text="Send a message", command=self.send_message)
         self.send.pack(side=LEFT)
@@ -43,7 +47,7 @@ class GUIClient(object):
     
     def send_message(self):
         msg = self.input.get()
-        print msg
+        self.input.delete(0, END)
         self.socket.send(msg)
 
     def incoming(self):
