@@ -40,7 +40,7 @@ class Server(object):
         while 1:
             data = con.recv(1024)
             if data:
-                self.send_broadcast('Hello %s' % data)
+                self.send_broadcast(data)
             else:
                 break
         con.close()
@@ -56,6 +56,7 @@ class Server(object):
         send data
         """
         print msg
+        print type(msg)
         con.send('oi')
         
     def send_broadcast(self, msg):
@@ -68,6 +69,9 @@ class Server(object):
         """
         pass
     
+    def disconnect(self):
+        self.socket.close()
+        
     def close_connection(self, con):
         """
         close connection
@@ -79,4 +83,7 @@ server = Server(settings.HOST, settings.PORT)
 server.listen(5)  # maximum of 5 connections
 
 while 1:
-    server.connecting()
+    try:
+        server.connecting()
+    except:
+        server.disconnect()
