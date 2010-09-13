@@ -9,6 +9,7 @@
     @license: see LICENSE.
 """
 
+from threading import Thread
 from socket import socket, AF_INET, SOCK_STREAM
 import settings
 
@@ -33,10 +34,14 @@ class Server(object):
         """
         self.socket.listen(max_number)
 
-    def connecting(self):
+    def accept(self):
         con, address = self.socket.accept()
         self.add_connection(con)
         
+        thread = Thread(target=self.connection, args=(con,))
+        thread.start()
+        
+    def connection(self, con):
         while 1:
             data = con.recv(1024)
             if data:
@@ -55,12 +60,12 @@ class Server(object):
         """
         send data
         """
-        print msg
-        print type(msg)
-        con.send('oi')
+        con.send(msg)
         
     def send_broadcast(self, msg):
+        print msg
         for con in self.connections:
+            print con
             self.send_msg(con, msg)
         
     def receive_msg(self):
@@ -68,22 +73,21 @@ class Server(object):
         receive data
         """
         pass
-    
-    def disconnect(self):
-        self.socket.close()
-        
+       
     def close_connection(self, con):
         """
         close connection
         """
         con.close()
-
+    
+    def disconnect(self):
+        self.socket.close()
 
 server = Server(settings.HOST, settings.PORT)
 server.listen(5)  # maximum of 5 connections
 
 while 1:
     try:
-        server.connecting()
+        server.accept()
     except:
         server.disconnect()

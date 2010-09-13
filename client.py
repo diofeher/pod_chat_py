@@ -11,7 +11,7 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 from Queue import Queue, Empty
-from Tkinter import Tk, Button, Text, LEFT, TOP, Entry
+from Tkinter import Tk, Button, Text, LEFT, TOP, Entry, END, DISABLED
 import settings
 
 
@@ -29,9 +29,6 @@ class GUIClient(object):
         self.queue = queue
         self.socket = socket(AF_INET, SOCK_STREAM)
         self.socket.connect((host, port))
-        thread = Thread(target=self.receiving)
-        thread.setDaemon(1)
-        thread.start()
         
         # TODO: Mount widget
         self.text = Text()
@@ -41,12 +38,12 @@ class GUIClient(object):
         self.input = Entry()
         self.input.pack(side=LEFT)
         
-    def receiving(self):
-        data = self.socket.recv(1024)
-        self.text.insert('end', data)
+    def receive_message(self, msg):
+        self.text.insert(END, msg + "\n")
     
     def send_message(self):
         msg = self.input.get()
+        print msg
         self.socket.send(msg)
 
     def incoming(self):
@@ -58,7 +55,7 @@ class GUIClient(object):
                  msg = self.queue.get(0)
                  # Check contents of message and do what it says
                  # As a test, we simply print it
-                 print msg
+                 self.receive_message(msg)
              except Empty:
                  pass
         
