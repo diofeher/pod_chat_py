@@ -63,9 +63,7 @@ class Server(object):
         con.send(msg)
         
     def send_broadcast(self, msg):
-        print msg
         for con in self.connections:
-            print con
             self.send_msg(con, msg)
         
     def close_connection(self, con):
