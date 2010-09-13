@@ -33,10 +33,10 @@ class GUIClient(object):
         # TODO: Mount widget
         self.text = Text()
         self.text.pack(side=TOP)
-        self.send = Button(text="Send a message", command=self.send_message)
-        self.send.pack(side=LEFT)
         self.input = Entry()
         self.input.pack(side=LEFT)
+        self.send = Button(text="Send a message", command=self.send_message)
+        self.send.pack(side=LEFT)
         
     def receive_message(self, msg):
         self.text.insert(END, msg + "\n")

@@ -68,12 +68,6 @@ class Server(object):
             print con
             self.send_msg(con, msg)
         
-    def receive_msg(self):
-        """
-        receive data
-        """
-        pass
-       
     def close_connection(self, con):
         """
         close connection
@@ -81,6 +75,9 @@ class Server(object):
         con.close()
     
     def disconnect(self):
+        """
+        shut down the server
+        """
         self.socket.close()
 
 server = Server(settings.HOST, settings.PORT)
@@ -88,6 +85,7 @@ server.listen(5)  # maximum of 5 connections
 
 while 1:
     try:
+        # accepting connections
         server.accept()
     except:
         server.disconnect()
