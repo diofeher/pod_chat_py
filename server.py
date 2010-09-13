@@ -55,7 +55,8 @@ class Server(object):
         """
         send data
         """
-        con.send(msg)
+        print msg
+        con.send('oi')
         
     def send_broadcast(self, msg):
         for con in self.connections:
