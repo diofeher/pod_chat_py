@@ -21,13 +21,14 @@ except:
     HOST = settings.HOST
 
 class GUIClient(object):
-    """Client"""
+    """
+    Wrapper used to control sockets and widgets
+    """
     def __init__(self, host, port, queue):
         """
-        Wrapper used to control sockets and widgets
-        
         @param host: unicode
         @param port: int
+        @param queue: Queue
         """
         # Constants
         self.TEXT_WIDTH = 150
@@ -38,7 +39,7 @@ class GUIClient(object):
         self.socket = socket(AF_INET, SOCK_STREAM)
         self.socket.connect((host, port))
         
-        # TODO: Mount widget
+        # Mount widgets
         scrollbar = Scrollbar()
         scrollbar.pack(side=RIGHT, fill=Y)
         self.text = Text(width=self.TEXT_WIDTH, yscrollcommand=scrollbar.set)
@@ -49,10 +50,16 @@ class GUIClient(object):
         self.send.pack(side=LEFT)
         
     def receive_message(self, msg):
+        """
+        Receive message from socket and move scrollbar to end.
+        """
         self.text.insert(END, msg + "\n")
         self.text.see(END)
     
     def send_message(self):
+        """
+        Send message to server and clean Entry widget.
+        """
         msg = self.input.get()
         self.input.delete(0, END)
         self.socket.send(msg)
@@ -71,10 +78,16 @@ class GUIClient(object):
                  pass
         
     def disconnect(self):
+        """
+        Disconnect socket
+        """
         self.socket.close()
 
 class ThreadedClient(object):
     def __init__(self, master):
+        """
+        Class used to handle threads and connect to GUI main thread.
+        """
         self.master = master
         self.queue = Queue()
         self.gui = GUIClient(HOST, settings.PORT, self.queue)
@@ -86,10 +99,16 @@ class ThreadedClient(object):
         self.check_msgs()
         
     def check_msgs(self):
+        """
+        Check messages incoming and send to GUI.
+        """
         self.gui.incoming()
         self.master.after(1000, self.check_msgs)
         
     def async_io(self):
+        """
+        Wait and put in queue messages from server.
+        """
         while 1:
             data = self.gui.socket.recv(4056)
             self.queue.put(data)
