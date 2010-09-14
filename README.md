@@ -4,6 +4,7 @@ POD_CHAT_PY
 What?
 -----
 TCP chat built in low-level python sockets/threads.
+Tkinter was used as GUI.
 
 How?
 ----
