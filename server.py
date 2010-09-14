@@ -105,23 +105,26 @@ class Server(object):
         
     def send_msg(self, con, msg):
         """
-        send data
+        Wrapper used to send data
         """
         con.send(msg)
         
     def send_broadcast(self, msg):
+        """
+        Send message to all clients connected
+        """
         for sock in self.sockets:
             self.send_msg(sock, msg)
         
     def close_connection(self, con):
         """
-        close connection
+        Close connection
         """
         con.close()
     
     def disconnect(self):
         """
-        shut down the server
+        Shut down the server
         """
         self.socket.close()
 
