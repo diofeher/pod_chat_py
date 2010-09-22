@@ -53,7 +53,7 @@ class GUIClient(object):
         self.send = Button(text="Send a message", command=self.send_message)
         self.send.pack(side=LEFT)
         
-        self.input.bind("<Return>", self.send_message_event)
+        self.input.bind("<Return>", self.send_message)
         
     def receive_message(self, msg):
         """
@@ -62,10 +62,7 @@ class GUIClient(object):
         self.text.insert(END, msg + "\n")
         self.text.see(END)
     
-    def send_message_event(self, event):
-        self.send_message()
-    
-    def send_message(self):
+    def send_message(self, *args, **kwargs):
         """
         Send message to server and clean Entry widget.
         """
