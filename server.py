@@ -84,7 +84,7 @@ class Server(object):
                 if data:
                     nick = connection.nick
                     nick_regex = re.search('^/nick (.+)', data)
-                    quit = re.search('^quit.+', data)
+                    quit = re.search('^/quit.*', data)
                     if nick_regex:
                         new_nick = nick_regex.group(1)
                         connection.nick = new_nick
