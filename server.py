@@ -72,6 +72,8 @@ class Server(object):
 
     def accept(self):
         sock, address = self.socket.accept()
+        
+        # used to check if server has reached maximum of clients.
         if len(self.sockets) == MAX_CONNECTIONS:
             self.send_msg(sock, '/quit_maximum')
             sock.close()
