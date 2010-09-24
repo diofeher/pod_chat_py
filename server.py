@@ -72,10 +72,12 @@ class Server(object):
 
     def accept(self):
         sock, address = self.socket.accept()
-        connection = Connection(sock, address)
-        if len(self.sockets) >= MAX_CONNECTIONS:
-            connection.socket.close()
+        if len(self.sockets) == MAX_CONNECTIONS:
+            self.send_msg(sock, '/quit_maximum')
+            sock.close()
             return
+            
+        connection = Connection(sock, address)
         self.sockets.update({sock:connection})
         self.send_broadcast("%s has joined chat." %  connection.nick)
         

@@ -59,6 +59,11 @@ class GUIClient(object):
         """
         Receive message from socket and move scrollbar to end.
         """
+        quit = re.search('^/quit_maximum.*', msg)
+        if quit:
+            print "Server has reached maximum of clients connected."
+            self.threaded_client.close()
+            return
         self.text.insert(END, msg + "\n")
         self.text.see(END)
     
