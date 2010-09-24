@@ -31,7 +31,7 @@ WELCOME_MSG = """
 """
 
 
-MAX_CONNECTIONS = 2
+MAX_CONNECTIONS = 5
 
 
 class Connection(object):
