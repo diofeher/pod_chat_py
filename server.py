@@ -87,6 +87,7 @@ class Server(object):
         thread.start()
         
     def connection(self, sock, connection):
+        msg_quit=''
         try:
             while 1:
                 data = sock.recv(4056)
@@ -94,12 +95,13 @@ class Server(object):
                 if data:
                     nick = connection.nick
                     nick_regex = re.search('^/nick (.+)', data)
-                    quit = re.search('^/quit.*', data)
+                    quit = re.search('^/quit(.*)', data)
                     if nick_regex:
                         new_nick = nick_regex.group(1)
                         connection.nick = new_nick
                         self.send_broadcast("%s is now known as %s" % (nick, new_nick))
                     elif quit:
+                        msg_quit = quit.group(1)
                         break
                     else:
                         data = "%s says: %s" % (connection.to_s(), data)
@@ -109,7 +111,10 @@ class Server(object):
         except Exception, e:
             print e
         finally:
-            self.send_broadcast("%s has left chat." % connection.nick)
+            msg = "%s has left chat." % connection.nick
+            if msg_quit:
+                msg += " Reason: %s" % msg_quit[1:]
+            self.send_broadcast(msg)
             self.sockets.pop(sock)
             sock.close()
         
