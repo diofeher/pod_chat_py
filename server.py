@@ -31,6 +31,9 @@ WELCOME_MSG = """
 """
 
 
+MAX_CONNECTIONS = 2
+
+
 class Connection(object):
     """
     Wrapper used in connection
@@ -70,6 +73,9 @@ class Server(object):
     def accept(self):
         sock, address = self.socket.accept()
         connection = Connection(sock, address)
+        if len(self.sockets) >= MAX_CONNECTIONS:
+            connection.socket.close()
+            return
         self.sockets.update({sock:connection})
         self.send_broadcast("%s has joined chat." %  connection.nick)
         
@@ -129,7 +135,7 @@ class Server(object):
         self.socket.close()
 
 server = Server(HOST, settings.PORT)
-server.listen(5)  # maximum of 5 connections
+server.listen(MAX_CONNECTIONS)  # maximum of 5 connections
 
 while 1:
     try:
