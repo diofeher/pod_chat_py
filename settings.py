@@ -8,3 +8,4 @@
 
 HOST = 'localhost'
 PORT = 8153
+MAX_CONNECTIONS = 5

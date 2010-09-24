@@ -31,9 +31,6 @@ WELCOME_MSG = """
 """
 
 
-MAX_CONNECTIONS = 5
-
-
 class Connection(object):
     """
     Wrapper used in connection
@@ -74,7 +71,7 @@ class Server(object):
         sock, address = self.socket.accept()
         
         # used to check if server has reached maximum of clients.
-        if len(self.sockets) == MAX_CONNECTIONS:
+        if len(self.sockets) == settings.MAX_CONNECTIONS:
             self.send_msg(sock, '/quit_maximum')
             sock.close()
             return
@@ -144,7 +141,7 @@ class Server(object):
         self.socket.close()
 
 server = Server(HOST, settings.PORT)
-server.listen(MAX_CONNECTIONS)  # maximum of 5 connections
+server.listen(settings.MAX_CONNECTIONS)  # maximum of 5 connections
 
 while 1:
     try:
